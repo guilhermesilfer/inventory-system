@@ -21,7 +21,4 @@ void update_product();
 // listar produtos do estoque
 void list_products(Estoque *);
 
-// liberação da memória do estoque
-void free_stock(Estoque *estoque);
-
 #endif
