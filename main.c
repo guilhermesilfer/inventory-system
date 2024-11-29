@@ -10,6 +10,7 @@ int main()
   // criação do estoque e inicialização
   Estoque *estoque = NULL;
   estoque = initialize_stock(estoque);
+  load_data(estoque);
 
   // criação do arquivo
   FILE *arquivo;
@@ -60,11 +61,21 @@ int main()
         insert_product(estoque);
         break;
       case 2:
-        // procuro produto pelo codigo
-        search_product(estoque);
+        // remove produto do estoque
+        remove_product(estoque);
+        break;
+      case 3:
+        // procura produto pelo codigo
+        list_products(estoque);
+        break;
+      case 4:
+        // procura produto pelo codigo e imprime na tela
+        search_product(estoque, read_code(estoque, false, false), true);
+        break;
+      case 5:
+        update_product(estoque);
         break;
     }
   }
-
   return 0;
 }

@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include "headers/structs.h"
+#include "headers/funcs.h"
 
 void print_menu()
 {
@@ -12,18 +13,21 @@ void print_menu()
   printf("(Digite o número da opção que deseja)\n\n");
   printf("[0] Sair (implemented)\n");
   printf("[1] Novo produto (implemented)\n");
-  printf("[2] Procurar produto (implemented)\n");
+  printf("[2] Remover produto (implemented)\n");
+  printf("[3] Mostrar produtos (implemented)\n");
+  printf("[4] Procurar produto (implemented)\n");
+  printf("[5] Atualizar produto (implemented\n");
   printf("\n");
   printf("=====================================\n\n");
 }
 
-// percorre todos os produtos e checa se já existe algum com o mesmo nome
-bool product_exists(Estoque *estoque, char nome[])
+// percorre todos os produtos e checa se já existe algum com o mesmo codigo
+bool product_exists(Estoque *estoque, int codigo)
 {
   int n = estoque->num_elem;
   for (int i = 0; i < n; i++)
   {
-    if (strcmp(estoque->produto[i].nome, nome) == false)
+    if (estoque->produto[i].codigo == codigo)
     {
       return true;
     }
@@ -46,21 +50,21 @@ void remove_newline(char *string, int tamanho)
 }
 
 // checa se uma string é um inteiro valido
-bool is_int(char *string) {
-  char *ptr_end;
-
-  if (string == NULL || *string == '\0') {
-    return false;
-  }
-
-  long value = strtol(string, &ptr_end, 10);
-
-  if (*ptr_end != '\0') {
-    return false;
-  }
-
-  return true;
-}
+//bool is_int(char *string) {
+//  char *ptr_end;
+//
+//  if (string == NULL || *string == '\0') {
+//    return false;
+//  }
+//
+//  long value = strtol(string, &ptr_end, 10);
+//
+//  if (*ptr_end != '\0') {
+//    return false;
+//  }
+//
+//  return true;
+//}
 
 // menu que aparece caso o produto já exista
 bool goto_menu()
@@ -91,66 +95,55 @@ bool goto_menu()
   }
 }
 
-char *read_code(Estoque *estoque, bool *ptr_error)
+int read_code(Estoque *estoque, bool *ptr_error, bool check_existence)
 {
-  char *codigo_input;
-  codigo_input = malloc(12 * sizeof(char));
+  int codigo_input;
 
   bool voltar = false;
   while (voltar == false) // while para repetir caso o produto digitado ja exista
   {
+    printf("Necessário ser um inteiro\n");
+    printf("Código: ");
     // coleta o codigo do produto
-    while (true)
+    while (scanf("%d", &codigo_input) != 1)
     {
-      printf("Necessário ser um inteiro\n");
-      printf("Código: ");
-      fgets(codigo_input, 12, stdin);
-      int tamanho = strlen(codigo_input);
-      remove_newline(codigo_input, tamanho);
-      printf("\n");
-
-      if (is_int(codigo_input)) break;
-      else
-      {
-        printf("Código inválido.\n");
-        continue;
-      }
-    }
-
-    // confere se a string passou de 10 de tamanho
-    if(strlen(codigo_input) > 10)
-    {
-      printf("Só pode ter no máximo 10 caracteres\n");
       while (getchar() != '\n');
+      printf("Código inválido.\n");
+      printf("Código: ");
       continue;
     }
+    while (getchar() != '\n');
+    printf("\n");
 
-    // checa se já existe algum produto com esse nome
-    bool existe;
-    existe = product_exists(estoque, codigo_input);
-    if (existe == true)
+    if (check_existence == true)
     {
-      printf("Esse código de produto já existe.\n");
-
-      // continua até o usuario digitar uma entrada válida
-      bool voltar = true;
-      while (true)
+      // checa se já existe algum produto com esse nome
+      bool existe;
+      existe = product_exists(estoque, codigo_input);
+      if (existe == true)
       {
-        voltar = goto_menu();
+        printf("Esse código de produto já existe.\n");
 
-        if (voltar == true)
+        // continua até o usuario digitar uma entrada válida
+        // voltar = true;
+        while (true)
         {
-          *ptr_error = true;
-          return "ERROR 1";
+          voltar = goto_menu();
+
+          if (voltar == true)
+          {
+            return *ptr_error = true;
+          }
+          else if (voltar == false) break;
         }
-        else if (voltar == false) break;
       }
+      else // caso não exista um produto com esse nome, o nome é retornado
+        return codigo_input;
     }
-    else // caso não exista um produto com esse nome, o nome é retornado
+    else
       return codigo_input;
   }
-  return "ERROR 2";
-};
+}
 
 char *read_name(Estoque *estoque, bool *ptr_error)
 {
@@ -174,33 +167,10 @@ char *read_name(Estoque *estoque, bool *ptr_error)
       while (getchar() != '\n');
       continue;
     }
-
-    // checa se já existe algum produto com esse nome
-    bool existe;
-    existe = product_exists(estoque, nome_input);
-    if (existe == true)
-    {
-      printf("Esse nome de produto já existe.\n");
-
-      // continua até o usuario digitar uma entrada válida
-      bool voltar = true;
-      while (true)
-      {
-        voltar = goto_menu();
-
-        if (voltar == true)
-        {
-          *ptr_error = true;
-          return "ERROR 1";
-        }
-        else if (voltar == false) break;
-      }
-    }
-    else // caso não exista um produto com esse nome, o nome é retornado
-      return nome_input;
+    return nome_input;
   }
-  return "ERROR 2";
-};
+  return NULL;
+}
 
 float read_price(bool *ptr_error)
 {
@@ -232,7 +202,7 @@ float read_price(bool *ptr_error)
     return preco_input;
   }
   return -1.0;
-};
+}
 
 int read_amount(bool *ptr_error)
 {
@@ -264,4 +234,40 @@ int read_amount(bool *ptr_error)
     return quant_input;
   }
   return -1;
-};
+}
+
+void print_product(Estoque *estoque, int codigo_input)
+{
+  // procura pelo produto e retorna a posição
+  int pos = search_product(estoque, codigo_input, false);
+
+  if (pos == -1)
+  {
+    printf("Não existe produto com o código: %d\n", codigo_input);
+    return;
+  }
+
+  // armazenando os dados em strings
+  char codigo[100];
+  char nome[100];
+  char preco[100];
+  char quantidade[100];
+  sprintf(codigo, "%d", estoque->produto[pos].codigo);
+  strcpy(nome, estoque->produto[pos].nome);
+  sprintf(preco, "%f", estoque->produto[pos].preco);
+  sprintf(quantidade, "%d", estoque->produto[pos].quantidade);
+
+  // imprime os dados
+  printf("Código: %s | ", codigo);
+  printf("Nome: %s | ", nome);
+  printf("Preço: %.2f | ", estoque->produto[pos].preco);
+  printf("Quantidade: %s | \n", quantidade);
+  for (int i = 0; i < strlen(codigo); i++) printf("_");
+  printf("_________|");
+  for (int i = 0; i < strlen(nome); i++) printf("_");
+  printf("________|");
+  for (int i = 0; i < strlen(preco) - 4; i++) printf("_");
+  printf("_________|");
+  for (int i = 0; i < strlen(quantidade); i++) printf("_");
+  printf("______________|\n\n");
+}
