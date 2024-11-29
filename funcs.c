@@ -106,8 +106,6 @@ void insert_product(Estoque *estoque)
 
   // armazena os dados do produto no arquivo produtos.csv
   write_data(codigo_input, nome_input, preco_input, quant_input);
-
-  printf("new num_elem: %d\n\n", estoque->num_elem);
 }
 
 // remove o produto do lista sequencial e do arquivo
@@ -140,7 +138,6 @@ void remove_product(Estoque *estoque) {
     estoque->produto[i] = estoque->produto[i + 1];
   }
   estoque->num_elem--;
-  printf("new num_elem: %d\n", estoque->num_elem);
   printf("Produto com código '%d' removido com sucesso.\n\n", codigo);
 
   // segunda parte que removerá o produto do arquivo
@@ -229,7 +226,7 @@ void list_products(Estoque *estoque)
 // atualiza o produto dado o codigo dele
 void update_product(Estoque *estoque) {
   if (estoque->num_elem == 0) {
-    printf("O estoque está vazio. Nada para atualizar.\n");
+    printf("O estoque está vazio. Nada para atualizar.\n\n");
     return;
   }
 

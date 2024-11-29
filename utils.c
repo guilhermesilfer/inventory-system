@@ -11,12 +11,12 @@ void print_menu()
   printf("#####     PAINEL DO ESTOQUE     #####\n");
   printf("#####################################\n\n");
   printf("(Digite o número da opção que deseja)\n\n");
-  printf("[0] Sair (implemented)\n");
-  printf("[1] Novo produto (implemented)\n");
-  printf("[2] Remover produto (implemented)\n");
-  printf("[3] Mostrar produtos (implemented)\n");
-  printf("[4] Procurar produto (implemented)\n");
-  printf("[5] Atualizar produto (implemented\n");
+  printf("[0] Sair\n");
+  printf("[1] Novo produto\n");
+  printf("[2] Remover produto\n");
+  printf("[3] Mostrar produtos\n");
+  printf("[4] Procurar produto\n");
+  printf("[5] Atualizar produto\n");
   printf("\n");
   printf("=====================================\n\n");
 }
@@ -48,23 +48,6 @@ void remove_newline(char *string, int tamanho)
     i++;
   }
 }
-
-// checa se uma string é um inteiro valido
-//bool is_int(char *string) {
-//  char *ptr_end;
-//
-//  if (string == NULL || *string == '\0') {
-//    return false;
-//  }
-//
-//  long value = strtol(string, &ptr_end, 10);
-//
-//  if (*ptr_end != '\0') {
-//    return false;
-//  }
-//
-//  return true;
-//}
 
 // menu que aparece caso o produto já exista
 bool goto_menu()

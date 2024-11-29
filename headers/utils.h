@@ -21,8 +21,6 @@ float read_price(bool *ptr_error);
 
 int read_amount(bool *ptr_error);
 
-bool is_int(char *string);
-
 void print_product(Estoque *estoque, int codigo);
 
 #endif
